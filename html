@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For You ❤️</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: radial-gradient(circle, #2c003e, #000);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+
+        /* Kotak utama yang mengurung tombol */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            min-height: 300px; /* Tinggi minimal agar tombol punya ruang lari */
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* Dasar koordinat tombol lari */
+        }
+
+        h1 { font-size: 1.3rem; margin-bottom: 40px; pointer-events: none; }
+
+        .btn-area {
+            width: 100%;
+            height: 150px; /* Area khusus buat tombol lari-larian */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        #btnMau {
+            background: #ff1493;
+            color: white;
+            box-shadow: 0 0 15px #ff1493;
+            z-index: 1;
+        }
+
+        #btnGak {
+            background: #444;
+            color: white;
+            position: absolute; /* Lari di dalam .btn-area saja */
+            z-index: 10;
+            white-space: nowrap;
+            touch-action: none;
+        }
+
+        #pesanAkhir {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #ffb6c1;
+            line-height: 1.6;
+        }
+
+        .heart-fly {
+            position: absolute; pointer-events: none;
+            background: #ff1493; width: 10px; height: 10px;
+            transform: rotate(-45deg);
+        }
+        .heart-fly::before, .heart-fly::after {
+            content: ""; width: 10px; height: 10px; background: inherit;
+            border-radius: 50%; position: absolute;
+        }
+        .heart-fly::before { top: -5px; left: 0; }
+        .heart-fly::after { top: 0; left: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1 id="judul">Kamu mau gak jadi pacarku? 🌹</h1>
+        
+        <div class="btn-area" id="area">
+            <button id="btnMau" onclick="terima()">Mau</button>
+            <!-- Tombol Gak Mau posisi awalnya saya geser sedikit -->
+            <button id="btnGak" style="top: 100px; left: 50%; transform: translateX(-50%);" 
+                    onmouseover="pindah()" ontouchstart="pindah()" onclick="pindah()">
+                Gak Mau
+            </button>
+        </div>
+
+        <div id="pesanAkhir">
+            <b>Yeay! Akhirnya... ❤️</b><br>
+            Janji ya jangan tinggalin aku,<br>
+            aku udah nunggu kamu terlalu lama.
+        </div>
+    </div>
+
+    <audio id="lagu" src="https://files.catbox.moe/973f7m.mp3" loop></audio>
+
+    <script>
+        const btnGak = document.getElementById('btnGak');
+        const area = document.getElementById('area');
+        const lagu = document.getElementById('lagu');
+        const pesan = document.getElementById('pesanAkhir');
+        const judul = document.getElementById('judul');
+        const btnMau = document.getElementById('btnMau');
+
+        function pindah() {
+            lagu.play();
+
+            // Mendapatkan ukuran kotak area
+            const areaWidth = area.offsetWidth;
+            const areaHeight = area.offsetHeight;
+
+            // Menghitung posisi acak HANYA di dalam kotak area
+            // Dikurangi lebar tombol agar tidak menabrak dinding kotak
+            const x = Math.random() * (areaWidth - btnGak.offsetWidth);
+            const y = Math.random() * (areaHeight - btnGak.offsetHeight);
+
+            // Terapkan posisi baru
+            btnGak.style.left = x + "px";
+            btnGak.style.top = y + "px";
+            btnGak.style.transform = "none"; // Hapus centering awal
+        }
+
+        function terima() {
+            lagu.play();
+            btnMau.style.display = "none";
+            btnGak.style.display = "none";
+            judul.innerText = "I Love You! ❤️✨";
+            pesan.style.display = "block";
+            setInterval(createHeart, 200);
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.classList.add('heart-fly');
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.top = "100vh";
+            document.body.appendChild(h);
+            const anim = h.animate([
+                { transform: `translateY(0) rotate(-45deg) scale(0.5)`, opacity: 1 },
+                { transform: `translateY(-110vh) rotate(360deg) scale(1.5)`, opacity: 0 }
+            ], { duration: 3000, easing: 'linear' });
+            anim.onfinish = () => h.remove();
+        }
+    </script>
+</body>
+</html>
